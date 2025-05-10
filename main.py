@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from app.utils.load_env import load_env_variables
 
-load_env_variables('dev.env')
+load_env_variables('.env')
 
 from app.core.config import settings
 from app.utils.logger_class import LoggerClass
