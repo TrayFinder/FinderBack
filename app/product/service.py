@@ -11,7 +11,7 @@ class ProductService:
         """
         Get on sale products in database.
         """
-        stmt = select(Product).where(Product.sale == True).order_by(Product.id)
+        stmt = select(Product).where(Product.sale == True)
         products_list = db.exec(stmt).all()
         LoggerClass.debug(f"Number of on sale products found: {products_list}")
         return products_list
