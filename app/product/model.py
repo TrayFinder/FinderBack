@@ -1,8 +1,8 @@
-from sqlalchemy import Column, DateTime, LargeBinary
+from sqlalchemy import Column, JSON, LargeBinary
 from sqlmodel import Field
 from app.schemas.entity_model import Base
-from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, List
+
 
 class Product(Base, table=True):
     """
@@ -11,18 +11,26 @@ class Product(Base, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    name: str = Field(nullable=False, max_length=255)
+    filename: str = Field(nullable=False)
+    
+    barcode: str = Field(nullable=False, unique=True)
+
+    product_name: str = Field(nullable=False, max_length=255)
 
     description: Optional[str] = Field(default=None)
 
-    category: Optional[str] = Field(default=None, max_length=30)
+    category: str = Field(default=None, max_length=30)
 
-    subcategory: Optional[str] = Field(default=None, max_length=30)
+    subcategory: str = Field(default=None, max_length=30)
 
     price: float = Field(nullable=False)
 
-    stock: Optional[int] = Field(default=None)
+    sale_price: float = Field(default=None)
 
-    sale: Optional[bool] = Field(default=None)
+    sale_percentage: Optional[int] = Field(default=None)
 
-    byte_image: Optional[bytes] = Field(default=None, sa_column=Column(LargeBinary, nullable=True))
+    stock: int = Field(default=None)
+
+    on_sale: bool = Field(default=None)
+
+    embeddings: Optional[List[float]] = Field(default=None, sa_column=Column(JSON, nullable=True))
