@@ -1,20 +1,56 @@
-# TrayFinder Backend
+# 🐳 FastAPI + MySQL Docker Setup
 
-This is the backend service for the TrayFinder application, built with FastAPI.
+This project uses Docker Compose to orchestrate a FastAPI application and a MySQL database.
 
-## Setup
+## 📦 Requirements
 
-To set up the project, run the following commands:
+- [Docker CE](https://docs.docker.com/get-docker/)
+- [Docker Compose CLI](https://docs.docker.com/compose/)
 
-```bash
-chmod +x setup.sh
-./setup.sh
+---
+
+## 🚀 Running the Project
+
+1. **Build the containers:**
+
+   ```bash
+   docker compose build
+   ```
+
+2. **Start the MySQL service in detached mode:**
+
+   ```bash
+   docker compose up -d mysql
+   ```
+
+3. **Start the FastAPI application:**
+
+   ```bash
+   docker compose up api
+   ```
+
+---
+
+## 🌐 API URL
+
+Once running, the FastAPI application will be available at:
+
+```
+http://0.0.0.0:8000
 ```
 
-This script handles tasks such as:
+You can access the interactive documentation at:
 
-- Creating a virtual environment.
-- Installing dependencies.
-- Setting up the database.
+```
+http://0.0.0.0:8000/docs
+```
 
-**Note:** Ensure you have Python 3.12 or a compatible version installed.
+---
+
+## 🛑 Stopping the services
+
+To stop all running containers:
+
+```bash
+docker compose down
+```
