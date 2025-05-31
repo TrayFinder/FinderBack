@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from app.utils.load_env import load_env_variables
+from fastapi.middleware.cors import CORSMiddleware
 
 load_env_variables('.env')
 
@@ -12,7 +13,13 @@ from app.core.database import init_db
 LoggerClass.configure("fastapi", debug=True)
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"], 
+)
 app.include_router(get_api_router())
 
 @app.get("/")
