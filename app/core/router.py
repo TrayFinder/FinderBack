@@ -1,9 +1,10 @@
 from fastapi import APIRouter
-from app.routes import *
+from app.product.routes import router
 
 api_router = APIRouter(prefix="/api/v1")
 
-# Include sub-routes
+api_router.include_router(router)
+
 def get_api_router() -> APIRouter:
     """
     Returns the configured API router with all routes included.
