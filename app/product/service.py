@@ -44,3 +44,21 @@ class ProductService:
         product = db.exec(stmt).first()
         LoggerClass.debug(f"Product found with id {id}: {product is not None}")
         return product
+
+    @staticmethod
+    def get_barcodes(db: Session) -> List[str]:
+        """
+        Get all products in database, seleting barcode
+        """
+        stmt = select(Product.barcode).order_by(Product.id)
+        barcode_list = db.exec(stmt).all()
+        return barcode_list
+
+    @staticmethod
+    def get_embeddings(db: Session) -> List[str]:
+        """
+        Get all products in database, seleting embeddings
+        """ 
+        stmt = select(Product.embeddings).order_by(Product.id)
+        embeddings_list = db.exec(stmt).all()
+        return embeddings_list

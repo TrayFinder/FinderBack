@@ -30,6 +30,14 @@ def get_on_sale_products(
 ):
     return ProductController.get_on_sale_products(db, page_number, page_size)
 
+@router.get("/barcodes", response_model= DefaultResponse)
+def get_barcodes(db: Session = Depends(get_session)):
+    return ProductController.get_barcodes(db)
+
+@router.get("/embeddings", response_model= DefaultResponse)
+def get_embeddings(db: Session = Depends(get_session)):
+    return ProductController.get_embeddings(db)
+
 @router.get("/{id}", response_model= DefaultResponse)
 def get_product_by_id(
     db: Session = Depends(get_session),
