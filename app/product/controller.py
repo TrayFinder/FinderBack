@@ -31,7 +31,6 @@ class ProductController:
             # Re-raise HTTPExceptions (like the 404)
             raise http_exc
         except Exception as e:
-            db.rollback()
             LoggerClass.error(f"Error getting products: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
@@ -59,7 +58,6 @@ class ProductController:
             # Re-raise HTTPExceptions (like the 404)
             raise http_exc
         except Exception as e:  
-            db.rollback()
             LoggerClass.error(f"Error getting on sale products: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
@@ -113,8 +111,36 @@ class ProductController:
             # Re-raise HTTPExceptions (like the 404)
             raise http_exc
         except Exception as e:
-            db.rollback()
             LoggerClass.error(f"Error getting product by id: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
             )
+
+    @staticmethod
+    def get_barcodes(db: Session):
+        """
+        Get all products in database, seleting barcode
+        """
+        try:
+            barcodes = ProductService.get_barcodes(db)
+            return DefaultResponse(data=barcodes, message="Barcodes retrieved successfully")
+        except Exception as e:
+            LoggerClass.error(f"Error getting barcodes: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
+            )
+    @staticmethod
+    def get_embeddings(db: Session):
+        """
+        Get all products in database, seleting embeddings
+        """
+        try:
+            embeddings = ProductService.get_embeddings(db)
+            return DefaultResponse(data=embeddings, message="Embeddings retrieved sucessfully")
+        except Exception as e:
+            LoggerClass.error(f"Error getting embeddings: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
+            )
+
+
