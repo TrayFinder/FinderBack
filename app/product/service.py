@@ -2,6 +2,10 @@ from sqlmodel import Session, select
 from app.utils.logger_class import LoggerClass
 from app.product.model import Product
 from typing import List, Optional
+from PIL import Image
+import numpy as np
+import io
+from fastapi import UploadFile
 
 class ProductService:
     """Service class for product-related operations."""
@@ -62,3 +66,13 @@ class ProductService:
         stmt = select(Product.embeddings).order_by(Product.id)
         embeddings_list = db.exec(stmt).all()
         return embeddings_list
+    
+    @staticmethod
+    async def image_to_numpy_array(file: UploadFile) -> np.ndarray:
+        """
+        Converts an uploaded image file to a NumPy array.
+        """ 
+        image_bytes = await file.read()
+        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        image_array = np.array(image)
+        return image_array

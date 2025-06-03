@@ -6,7 +6,7 @@ from typing import List, Dict
 from sqlalchemy.exc import IntegrityError
 from app.schemas.response_model import DefaultResponse
 import json
-
+import os
 
 class ProductController:
     
@@ -142,5 +142,37 @@ class ProductController:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
             )
+        
+    @staticmethod
+    async def upload_image_and_convert_to_array(file: UploadFile):
+        """
+        Receives an image, validates it, converts to a NumPy array, and returns its shape.
+        """
+        try:
+            allowed_extensions = {".png", ".jpg", ".jpeg"}
+            filename = file.filename.lower()
+            ext = os.path.splitext(filename)[1]
+            if ext not in allowed_extensions:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid file type. Only .png, .jpg, .jpeg are allowed"
+                )
+            if file.content_type not in {"image/png", "image/jpeg"}:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid MIME type. Only PNG and JPEG images are allowed"
+                )
+            image_array = await ProductService.image_to_numpy_array(file)
+            return DefaultResponse(
+                data={"shape": image_array.shape},
+                message="Image successfully converted"
+            )
+        except Exception as e:
+            LoggerClass.error(f"Error processing image: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal Server Error: {e}"
+            )
+
 
 
