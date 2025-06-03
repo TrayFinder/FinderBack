@@ -1,7 +1,9 @@
-from sqlalchemy import Column, JSON, LargeBinary
+from typing import List, Optional
+
+from sqlalchemy import JSON, Column
 from sqlmodel import Field
+
 from app.schemas.entity_model import Base
-from typing import Optional, List
 
 
 class Product(Base, table=True):

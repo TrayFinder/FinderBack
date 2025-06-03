@@ -1,7 +1,7 @@
 """Module describing logger_class for logging - not exeutable"""
+import logging
 import os
 import time
-import logging
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(CURRENT_DIR + '/../..')

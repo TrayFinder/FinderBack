@@ -1,10 +1,12 @@
-from sqlmodel import Session, select
-from app.utils.logger_class import LoggerClass
-from app.product.model import Product
 from typing import List, Optional
+
+import cv2
 import numpy as np
 from fastapi import UploadFile
-import cv2
+from sqlmodel import Session, select
+
+from app.product.model import Product
+from app.utils.logger_class import LoggerClass
 
 
 class ProductService:

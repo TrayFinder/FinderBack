@@ -1,5 +1,7 @@
 from urllib.parse import quote_plus
-from sqlmodel import SQLModel, create_engine, Session
+
+from sqlmodel import Session, SQLModel, create_engine
+
 from app.core.config import settings
 
 # Create connection URL from settings
