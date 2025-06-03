@@ -8,63 +8,86 @@ from app.schemas.response_model import DefaultResponse
 import json
 import os
 
+
 class ProductController:
-    
     @staticmethod
-    def get_not_on_sale_products(db: Session, page_number: int, page_size: int) -> List[Dict]:
+    def get_not_on_sale_products(
+        db: Session, page_number: int, page_size: int
+    ) -> List[Dict]:
         """
         Get not on sale products.
         """
         try:
             skip = (page_number - 1) * page_size
-            products_list = ProductService.get_not_on_sale_products(db, skip, page_size)
-            
+            products_list = ProductService.get_not_on_sale_products(
+                db, skip, page_size
+            )
+
             if not products_list:
                 raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="No products found"
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail='No products found',
                 )
-            
-            serialized_products = [product.model_dump() for product in products_list]
-            return DefaultResponse(data=serialized_products, message="Products retrieved successfully")
 
-        except HTTPException as http_exc:  
+            serialized_products = [
+                product.model_dump() for product in products_list
+            ]
+            return DefaultResponse(
+                data=serialized_products,
+                message='Products retrieved successfully',
+            )
+
+        except HTTPException as http_exc:
             # Re-raise HTTPExceptions (like the 404)
             raise http_exc
         except Exception as e:
-            LoggerClass.error(f"Error getting products: {e}")
+            LoggerClass.error(f'Error getting products: {e}')
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f'Internal Server Error: {e}',
             )
 
-
     @staticmethod
-    def get_on_sale_products(db: Session, page_number: int, page_size: int) -> List[Dict]:
+    def get_on_sale_products(
+        db: Session, page_number: int, page_size: int
+    ) -> List[Dict]:
         """
         Get on sale products.
         """
         try:
             skip = (page_number - 1) * page_size
-            products_list = ProductService.get_on_sale_products(db, skip, page_size)  
+            products_list = ProductService.get_on_sale_products(
+                db, skip, page_size
+            )
 
             if not products_list:
                 raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="No on sale products found"
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail='No on sale products found',
                 )
 
-            serialized_products = [product.model_dump() for product in products_list]
-            return DefaultResponse(data=serialized_products, message="Products retrieved successfully")
+            serialized_products = [
+                product.model_dump() for product in products_list
+            ]
+            return DefaultResponse(
+                data=serialized_products,
+                message='Products retrieved successfully',
+            )
 
         except HTTPException as http_exc:
             # Re-raise HTTPExceptions (like the 404)
             raise http_exc
-        except Exception as e:  
-            LoggerClass.error(f"Error getting on sale products: {e}")
+        except Exception as e:
+            LoggerClass.error(f'Error getting on sale products: {e}')
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f'Internal Server Error: {e}',
             )
 
     @staticmethod
-    async def import_products_fast(db: Session, file: UploadFile) -> DefaultResponse:
+    async def import_products_fast(
+        db: Session, file: UploadFile
+    ) -> DefaultResponse:
         """
         Bulk insert products into the database.
         """
@@ -75,22 +98,25 @@ class ProductController:
             if not isinstance(products, list):
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Invalid JSON format. Expected a list of products."
+                    detail='Invalid JSON format. Expected a list of products.',
                 )
 
             await ProductService.bulk_insert_products(db, products)
-            return DefaultResponse(data=None, message="Products imported successfully")
+            return DefaultResponse(
+                data=None, message='Products imported successfully'
+            )
 
         except IntegrityError as e:
             db.roolback()
-            LoggerClass.error(f"Error importing products: {e}")
-            raise ValueError("One or more products violate unique constraints.")
+            LoggerClass.error(f'Error importing products: {e}')
+            raise ValueError(
+                'One or more products violate unique constraints.'
+            )
         except Exception as e:
             db.rollback()
-            LoggerClass.error(f"Error importing products: {e}")
+            LoggerClass.error(f'Error importing products: {e}')
             raise HTTPException(
-                status_code = 500,
-                detail=f"Failed to import products: {e}"
+                status_code=500, detail=f'Failed to import products: {e}'
             )
 
     @staticmethod
@@ -102,18 +128,23 @@ class ProductController:
             product = ProductService.get_product_by_id(db, id)
             if not product:
                 raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail='Product not found',
                 )
             serialized_product = product.model_dump()
-            return DefaultResponse(data=serialized_product, message="Product retrieved successfully")
-        
+            return DefaultResponse(
+                data=serialized_product,
+                message='Product retrieved successfully',
+            )
+
         except HTTPException as http_exc:
             # Re-raise HTTPExceptions (like the 404)
             raise http_exc
         except Exception as e:
-            LoggerClass.error(f"Error getting product by id: {e}")
+            LoggerClass.error(f'Error getting product by id: {e}')
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f'Internal Server Error: {e}',
             )
 
     @staticmethod
@@ -123,12 +154,16 @@ class ProductController:
         """
         try:
             barcodes = ProductService.get_barcodes(db)
-            return DefaultResponse(data=barcodes, message="Barcodes retrieved successfully")
-        except Exception as e:
-            LoggerClass.error(f"Error getting barcodes: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
+            return DefaultResponse(
+                data=barcodes, message='Barcodes retrieved successfully'
             )
+        except Exception as e:
+            LoggerClass.error(f'Error getting barcodes: {e}')
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f'Internal Server Error: {e}',
+            )
+
     @staticmethod
     def get_embeddings(db: Session):
         """
@@ -136,43 +171,43 @@ class ProductController:
         """
         try:
             embeddings = ProductService.get_embeddings(db)
-            return DefaultResponse(data=embeddings, message="Embeddings retrieved sucessfully")
-        except Exception as e:
-            LoggerClass.error(f"Error getting embeddings: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal Server Error: {e}"
+            return DefaultResponse(
+                data=embeddings, message='Embeddings retrieved sucessfully'
             )
-        
+        except Exception as e:
+            LoggerClass.error(f'Error getting embeddings: {e}')
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f'Internal Server Error: {e}',
+            )
+
     @staticmethod
     async def upload_image_and_convert_to_array(file: UploadFile):
         """
         Receives an image, validates it, converts to a NumPy array, and returns its shape.
         """
         try:
-            allowed_extensions = {".png", ".jpg", ".jpeg"}
+            allowed_extensions = {'.png', '.jpg', '.jpeg'}
             filename = file.filename.lower()
             ext = os.path.splitext(filename)[1]
             if ext not in allowed_extensions:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Invalid file type. Only .png, .jpg, .jpeg are allowed"
+                    detail='Invalid file type. Only .png, .jpg, .jpeg are allowed',
                 )
-            if file.content_type not in {"image/png", "image/jpeg"}:
+            if file.content_type not in {'image/png', 'image/jpeg'}:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Invalid MIME type. Only PNG and JPEG images are allowed"
+                    detail='Invalid MIME type. Only PNG and JPEG images are allowed',
                 )
-            image_array = await ProductService.image_to_numpy_array(file)
+            image_array = await ProductService.predict(file)
             return DefaultResponse(
-                data={"shape": image_array.shape},
-                message="Image successfully converted"
+                data={'shape': image_array.shape},
+                message='Image successfully converted',
             )
         except Exception as e:
-            LoggerClass.error(f"Error processing image: {e}")
+            LoggerClass.error(f'Error processing image: {e}')
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Internal Server Error: {e}"
+                detail=f'Internal Server Error: {e}',
             )
-
-
-
