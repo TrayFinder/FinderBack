@@ -14,6 +14,12 @@ async def import_products_fast(
 ):
     return await ProductController.import_products_fast(db, file)
 
+@router.post("/upload-image", response_model= DefaultResponse)
+async def upload_image(
+    file: UploadFile = File(...)
+):
+    return await ProductController.upload_image_and_convert_to_array(file)
+
 @router.get("/not-sale", response_model= DefaultResponse)
 def get_products(
     db: Session = Depends(get_session),
