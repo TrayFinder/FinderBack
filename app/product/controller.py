@@ -182,7 +182,7 @@ class ProductController:
             )
 
     @staticmethod
-    async def upload_image_and_convert_to_array(file: UploadFile):
+    async def predict(db, file: UploadFile):
         """
         Receives an image, validates it, converts to a NumPy array, and returns its shape.
         """
@@ -195,18 +195,47 @@ class ProductController:
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail='Invalid file type. Only .png, .jpg, .jpeg are allowed',
                 )
-            if file.content_type not in {'image/png', 'image/jpeg'}:
+            if file.content_type not in {'image/png', 'image/jpg', 'image/jpeg'}:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail='Invalid MIME type. Only PNG and JPEG images are allowed',
                 )
-            image_array = await ProductService.image_to_numpy_array(file)
+            products = await ProductService.predict(db, file)
             return DefaultResponse(
-                data={'shape': image_array.shape},
-                message='Image successfully converted',
+                data=products,
+                message='Barcodes successfully predicted',
             )
         except Exception as e:
             LoggerClass.error(f'Error processing image: {e}')
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f'Internal Server Error: {e}',
+            )
+
+    async def get_product_by_barcode(
+        db: Session, barcode: str
+    ) -> DefaultResponse:
+        """
+        Get a product by its barcode.
+        """
+        try:
+            product = ProductService.get_product_by_barcode(db, barcode)
+            if not product:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail='Product not found',
+                )
+
+            return DefaultResponse(
+                data=product,
+                message='Product retrieved successfully',
+            )
+
+        except HTTPException as http_exc:
+            # Re-raise HTTPExceptions (like the 404)
+            raise http_exc
+        except Exception as e:
+            LoggerClass.error(f'Error getting product by barcode: {e}')
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f'Internal Server Error: {e}',
