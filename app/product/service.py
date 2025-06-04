@@ -5,7 +5,7 @@ import cv2
 from sqlmodel import Session, select
 from app.utils.logger_class import LoggerClass
 from app.product.model import Product
-from finderinference.production.main.main import AiPipeline
+from FinderInference.production.main.main import AiPipeline
 
 class ProductService:
     """Service class for product-related operations."""
