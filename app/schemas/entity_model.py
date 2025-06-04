@@ -3,16 +3,18 @@ from typing import Any, Dict, Type, TypeVar
 from sqlalchemy.sql import func as sa_func
 from sqlmodel import SQLModel, Field
 
-T = TypeVar("T", bound="Base")   # usado nos métodos de ajuda
+T = TypeVar('T', bound='Base')   # usado nos métodos de ajuda
+
 
 class DeclarativeBase(SQLModel):
     """Base comum para todos os modelos ― configurações Pydantic ficam aqui."""
+
     __abstract__ = True
 
     model_config = {
-        "from_attributes": True,          # habilita .from_orm()
-        "populate_by_name": True,
-        "arbitrary_types_allowed": True,  # útil p/ objetos complexos
+        'from_attributes': True,  # habilita .from_orm()
+        'populate_by_name': True,
+        'arbitrary_types_allowed': True,  # útil p/ objetos complexos
     }
 
 
@@ -20,23 +22,24 @@ class TimestampMixin(SQLModel):
     created_at: datetime = Field(
         default=None,
         nullable=False,
-        sa_column_kwargs={"server_default": sa_func.now()},
-        description="Momento (UTC) em que o registro foi criado",
+        sa_column_kwargs={'server_default': sa_func.now()},
+        description='Momento (UTC) em que o registro foi criado',
     )
 
     updated_at: datetime = Field(
         default=None,
         nullable=False,
         sa_column_kwargs={
-            "server_default": sa_func.now(),
-            "onupdate": sa_func.now(),
+            'server_default': sa_func.now(),
+            'onupdate': sa_func.now(),
         },
-        description="Momento (UTC) da última modificação",
+        description='Momento (UTC) da última modificação',
     )
 
 
 class Base(DeclarativeBase, TimestampMixin):
     """Modelo raiz para todas as entidades."""
+
     __abstract__ = True
 
     @classmethod
