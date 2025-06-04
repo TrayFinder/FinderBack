@@ -8,6 +8,7 @@ from sqlmodel import Session, select
 from app.product.model import Product
 from app.utils.logger_class import LoggerClass
 
+from main import AiPipeline
 
 class ProductService:
     """Service class for product-related operations."""
@@ -95,3 +96,6 @@ class ProductService:
         image_bytes = await file.read()
         image_np = np.frombuffer(image_bytes, dtype=np.uint8)
         image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)  # BGR format
+        ai = AiPipeline()
+        barcodes = ai(image)
+        return barcodes

@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, File, Path, Query, UploadFile
 from sqlmodel import Session
 
