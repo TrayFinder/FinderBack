@@ -1,7 +1,9 @@
-from sqlalchemy import Column, JSON, LargeBinary
+from typing import List, Optional
+
+from sqlalchemy import JSON, Column
 from sqlmodel import Field
+
 from app.schemas.entity_model import Base
-from typing import Optional, List
 
 
 class Product(Base, table=True):
@@ -12,7 +14,7 @@ class Product(Base, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
     filename: str = Field(nullable=False)
-    
+
     barcode: str = Field(nullable=False, unique=True)
 
     product_name: str = Field(nullable=False, max_length=255)
@@ -33,4 +35,6 @@ class Product(Base, table=True):
 
     on_sale: bool = Field(default=None)
 
-    embeddings: Optional[List[float]] = Field(default=None, sa_column=Column(JSON, nullable=True))
+    embeddings: Optional[List[float]] = Field(
+        default=None, sa_column=Column(JSON, nullable=True)
+    )
