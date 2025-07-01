@@ -1,14 +1,11 @@
 from typing import List, Optional
-
-import cv2
-import numpy as np
 from fastapi import UploadFile
+import numpy as np
+import cv2
 from sqlmodel import Session, select
-
-from app.product.model import Product
 from app.utils.logger_class import LoggerClass
-
-from main import AiPipeline
+from app.product.model import Product
+from FinderInference.production.main.main import AiPipeline
 
 class ProductService:
     """Service class for product-related operations."""
@@ -89,7 +86,18 @@ class ProductService:
         return embeddings_list
 
     @staticmethod
-    async def predict(file: UploadFile) -> np.ndarray:
+    async def get_product_by_barcode(db: Session, barcode: str) -> Optional[Product]:
+        """
+        Get a product by its barcode.
+        """
+        stmt = select(Product).where(Product.barcode == barcode)
+        product = db.exec(stmt).first()
+        LoggerClass.debug(f'Product found with barcode {barcode}: {product is not None}')
+        serialized_product = product.model_dump()
+        return serialized_product
+
+    @staticmethod
+    async def predict(db: Session, file: UploadFile) -> np.ndarray:
         """
         Converts an uploaded image file to a NumPy array using OpenCV.
         """
@@ -98,4 +106,6 @@ class ProductService:
         image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)  # BGR format
         ai = AiPipeline()
         barcodes = ai(image)
-        return barcodes
+        print(barcodes)
+        serialized_products = [await ProductService.get_product_by_barcode(db, barcode) for barcode in barcodes]
+        return serialized_products

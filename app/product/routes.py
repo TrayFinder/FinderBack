@@ -15,9 +15,12 @@ async def import_products_fast(
     return await ProductController.import_products_fast(db, file)
 
 
-@router.post('/upload-image', response_model=DefaultResponse)
-async def upload_image(file: UploadFile = File(...)):
-    return await ProductController.upload_image_and_convert_to_array(file)
+@router.post('/predict', response_model=DefaultResponse)
+async def upload_image(
+    db: Session = Depends(get_session),
+    file: UploadFile = File(...)
+):
+    return await ProductController.predict(db, file)
 
 
 @router.get('/not-sale', response_model=DefaultResponse)
@@ -44,6 +47,12 @@ def get_on_sale_products(
 def get_barcodes(db: Session = Depends(get_session)):
     return ProductController.get_barcodes(db)
 
+@router.get('/barcodes/{barcode}', response_model=DefaultResponse)
+def get_product_by_barcode(
+    db: Session = Depends(get_session),
+    barcode: str = Path(..., description='The barcode of the product to get'),
+):
+    return ProductController.get_product_by_barcode(db, barcode)
 
 @router.get('/embeddings', response_model=DefaultResponse)
 def get_embeddings(db: Session = Depends(get_session)):

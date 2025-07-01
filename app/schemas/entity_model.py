@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Any, Dict, Type, TypeVar
-
 from sqlalchemy.sql import func as sa_func
 from sqlmodel import Field, SQLModel
 
