@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Query, Path, UploadFile, File
-from typing import List
+from fastapi import APIRouter, Depends, File, Path, Query, UploadFile
 from sqlmodel import Session
-from app.schemas.response_model import DefaultResponse
-from app.product.controller import ProductController
+
 from app.core.database import get_session
+from app.product.controller import ProductController
+from app.schemas.response_model import DefaultResponse
 
 router = APIRouter(prefix='/products', tags=['Products'])
 

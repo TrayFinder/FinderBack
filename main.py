@@ -1,14 +1,15 @@
 import uvicorn
 from fastapi import FastAPI
-from app.utils.load_env import load_env_variables
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.utils.load_env import load_env_variables
 
 load_env_variables('.env')
 
 from app.core.config import settings
-from app.utils.logger_class import LoggerClass
-from app.core.router import get_api_router
 from app.core.database import init_db
+from app.core.router import get_api_router
+from app.utils.logger_class import LoggerClass
 
 LoggerClass.configure('fastapi', debug=True)
 
